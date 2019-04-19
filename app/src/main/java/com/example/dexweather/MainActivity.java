@@ -1,7 +1,5 @@
 package com.example.dexweather;
-
 import android.graphics.Color;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -13,10 +11,12 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.time.DayOfWeek;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,7 +60,11 @@ public class MainActivity extends AppCompatActivity {
             String data = new JSONObject(daily).get("data").toString();
             JSONArray jsonArr = new JSONArray(data);
             colorFlip = true;
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            long timeMillis = System.currentTimeMillis();
             for(int i = 0; i < jsonArr.length(); i++) {
+                Date date = new Date(timeMillis);
+                String weatherDay = dateFormat.format(date);
                 JSONObject jsonHolder = new JSONObject(jsonArr.get(i).toString());
                 String summary = jsonHolder.get("summary").toString();
                 String tempHigh = jsonHolder.get("apparentTemperatureHigh").toString();
@@ -68,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
                 String humidity = jsonHolder.get("humidity").toString();
                 String pressure = jsonHolder.get("pressure").toString();
                 String windSpeed = jsonHolder.get("windSpeed").toString();
-                displayWeather(summary, tempHigh, tempLow, humidity, pressure, windSpeed);
+                displayWeather(weatherDay, summary, tempHigh, tempLow, humidity, pressure, windSpeed);
+                timeMillis += TimeUnit.DAYS.toMillis(1);
             }
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -79,13 +84,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void displayWeather(String summary, String highTemp, String lowTemp,
+    private void displayWeather(String time, String summary, String highTemp, String lowTemp,
                                 final String humidity, final String pressure, final String windSpeed) {
         CardView weatherCard = new CardView(this);
         final CardView dayCard = new CardView(this);
         weatherCard.setMinimumHeight(300);
         TextView cardInfo = new TextView(this);
-        cardInfo.setText("\n" + summary + "\n" + "high : " + highTemp + "\n" + "low : " + lowTemp);
+        cardInfo.setText("\n" + time + "\n" + "\n" + summary + "\n" + "high : " + highTemp + "\n" + "low : " + lowTemp);
         weatherCard.addView(cardInfo);
         if(colorFlip = !colorFlip) { // Changes color of card every other time
             weatherCard.setCardBackgroundColor(Color.parseColor("#A374FF"));
