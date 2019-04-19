@@ -1,6 +1,7 @@
 package com.example.dexweather;
 
 import android.graphics.Color;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -12,6 +13,9 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+import java.time.DayOfWeek;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,8 +65,10 @@ public class MainActivity extends AppCompatActivity {
                 String summary = jsonHolder.get("summary").toString();
                 String tempHigh = jsonHolder.get("apparentTemperatureHigh").toString();
                 String tempLow = jsonHolder.get("apparentTemperatureLow").toString();
-                Long time = Long.parseLong(jsonHolder.get("time").toString());
-                displayWeather(summary, tempHigh, tempLow);
+                String humidity = jsonHolder.get("humidity").toString();
+                String pressure = jsonHolder.get("pressure").toString();
+                String windSpeed = jsonHolder.get("windSpeed").toString();
+                displayWeather(summary, tempHigh, tempLow, humidity, pressure, windSpeed);
             }
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -73,8 +79,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void displayWeather(String summary, String highTemp, String lowTemp) {
+    private void displayWeather(String summary, String highTemp, String lowTemp,
+                                final String humidity, final String pressure, final String windSpeed) {
         CardView weatherCard = new CardView(this);
+        final CardView dayCard = new CardView(this);
         weatherCard.setMinimumHeight(300);
         TextView cardInfo = new TextView(this);
         cardInfo.setText("\n" + summary + "\n" + "high : " + highTemp + "\n" + "low : " + lowTemp);
@@ -90,9 +98,31 @@ public class MainActivity extends AppCompatActivity {
         weatherCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TO DO: Add view with extra data
+                dayCard.setMinimumHeight(800);
+                dayCard.setCardBackgroundColor(Color.parseColor("#A374FF"));
+                TextView dayInfo = new TextView(MainActivity.this);
+                dayInfo.setTextColor(Color.parseColor("#FFFFFF"));
+                dayInfo.setText("\n" + "humidity: " + humidity
+                        + "\n" + "pressure : " + pressure
+                        + "\n" + "windspeed : " + windSpeed);
+                dayCard.addView(dayInfo);
+                LinearLayout linearLay = findViewById(R.id.linearLayout);
+                linearLay.removeAllViews();
+                linearLay.addView(dayCard);
+                Button backButton = (Button)findViewById(R.id.back_button);
+                backButton.setVisibility(View.VISIBLE);
             }
         });
+        Button backButton = (Button)findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout linearLay = findViewById(R.id.linearLayout);
+                linearLay.removeAllViews();
+                getWeather();
+            }
+        });
+        backButton.setVisibility(View.INVISIBLE);
         LinearLayout linearLay = findViewById(R.id.linearLayout);
         linearLay.addView(weatherCard);
     }
