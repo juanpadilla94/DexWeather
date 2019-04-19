@@ -11,7 +11,6 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     private void getWeather() {
         try {
+            // GET Request for data
             String jsonGetResult = new WeatherModel().execute(url).get();
             String daily = new JSONObject(jsonGetResult).get("daily").toString();
             String data = new JSONObject(daily).get("data").toString();
@@ -62,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
             colorFlip = true;
             DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
             long timeMillis = System.currentTimeMillis();
+            // iterate through all days for weather
             for(int i = 0; i < jsonArr.length(); i++) {
                 Date date = new Date(timeMillis);
                 String weatherDay = dateFormat.format(date);
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 String humidity = jsonHolder.get("humidity").toString();
                 String pressure = jsonHolder.get("pressure").toString();
                 String windSpeed = jsonHolder.get("windSpeed").toString();
+                // weather on UI
                 displayWeather(weatherDay, summary, tempHigh, tempLow, humidity, pressure, windSpeed);
                 timeMillis += TimeUnit.DAYS.toMillis(1);
             }
@@ -83,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
     private void displayWeather(String time, String summary, String highTemp, String lowTemp,
                                 final String humidity, final String pressure, final String windSpeed) {
         CardView weatherCard = new CardView(this);
@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
             weatherCard.setCardBackgroundColor(Color.parseColor("#ffffff"));
             cardInfo.setTextColor(Color.parseColor("#000000"));
         }
+        // display view of particular day selected and show extra info
         weatherCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 backButton.setVisibility(View.VISIBLE);
             }
         });
+        // Return to results i.e. take out view from stack
         Button backButton = (Button)findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
