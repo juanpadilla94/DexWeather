@@ -51,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private void getWeather() {
+
+    public void getWeather() {
         try {
             // GET Request for data
             String jsonGetResult = new WeatherModel().execute(url).get();
@@ -84,7 +85,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    private void displayWeather(String time, String summary, String highTemp, String lowTemp,
+
+    public void displayWeather(String time, String summary, String highTemp, String lowTemp,
                                 final String humidity, final String pressure, final String windSpeed) {
         CardView weatherCard = new CardView(this);
         final CardView dayCard = new CardView(this);
